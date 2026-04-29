@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <section class="detail-shell">
+        <article class="card detail-visual">
+            <div class="detail-badge-row">
+                <span class="pill">Produit</span>
+                {% if product.category %}
+                    <span class="pill pill-soft">{{ product.category.name }}</span>
+                {% else %}
+                    <span class="pill pill-soft">Sans catégorie</span>
+                {% endif %}
+            </div>
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" style="margin-top: 1rem;">
+            {% else %}
+                <div class="image-placeholder" style="margin-top: 1rem;">
+                    <span>{{ product.name|slice:":1"|upper }}</span>
+                </div>
+            {% endif %}
+        </article>
+
+        <article class="card detail-copy">
+            <p class="eyebrow">Fiche produit</p>
+            <h1>{{ product.name }}</h1>
+            <p class="price-tag">{{ product.price }} €</p>
+            {% if product.description %}
+                <p class="lead">{{ product.description }}</p>
+            {% else %}
+                <p class="lead">Aucune description n'est disponible pour ce produit.</p>
+            {% endif %}
+
+            <div class="detail-grid">
+                <div class="info-tile">
+                    <span class="info-label">Disponibilité</span>
+                    <strong>
+                        {% if product.stock > 5 %}
+                            ✓ Stock abondant
+                        {% elif product.stock > 0 %}
+                            ⏰ Stock limité ({{ product.stock }})
+                        {% else %}
+                            ✗ Rupture de stock
+                        {% endif %}
+                    </strong>
+                </div>
+                <div class="info-tile">
+                    <span class="info-label">Catégorie</span>
+                    <strong>{% if product.category %}{{ product.category.name }}{% else %}Non classé{% endif %}</strong>
+                </div>
+            </div>
+
+            {% if product.stock > 0 %}
+                <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%); padding: 1.25rem; border-radius: var(--border-radius-md); margin: 1.5rem 0; border-left: 4px solid var(--success-color);">
+                    <p style="color: var(--success-color); font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.5rem;">✓ Produit disponible à la livraison</p>
+                </div>
+            {% else %}
+                <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%); padding: 1.25rem; border-radius: var(--border-radius-md); margin: 1.5rem 0; border-left: 4px solid var(--danger-color);">
+                    <p style="color: var(--danger-color); font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.5rem;">✗ Actuellement indisponible - Réessayez bientôt</p>
+                </div>
+            {% endif %}
+
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem;">
+                {% if product.category %}
+                    <a class="btn btn-outline-primary" href="{% url 'category_detail' product.category.id %}">Voir la catégorie</a>
+                {% endif %}
+                <a class="btn btn-primary" href="{% url 'product_list' %}">Retour au catalogue</a>
+            </div>
+        </article>
+    </section>
+
+    <section style="margin-top: 4rem; padding-top: 3rem; border-top: 2px solid var(--neutral-200);">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Suggestions</p>
+                <h2>Continuer la visite</h2>
+            </div>
+            <a class="btn btn-outline-primary" href="{% url 'product_list' %}">Voir tous</a>
+        </div>
+        <div style="text-align: center; padding: 3rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%); border-radius: var(--border-radius-lg); border: 1px solid rgba(99, 102, 241, 0.1);">
+            <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 1rem;">Explorez notre catalogue complet pour découvrir d'autres produits.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a class="btn btn-primary" href="{% url 'product_list' %}">Voir le catalogue</a>
+                <a class="btn btn-outline-primary" href="{% url 'category_list' %}">Voir les catégories</a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

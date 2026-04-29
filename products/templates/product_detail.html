@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <section class="detail-shell">
+        <article class="card detail-visual">
+            <div class="detail-badge-row">
+                <span class="pill">Produit</span>
+                {% if product.category %}
+                    <span class="pill pill-soft">{{ product.category.name }}</span>
+                {% else %}
+                    <span class="pill pill-soft">Sans categorie</span>
+                {% endif %}
+            </div>
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" style="margin-top: 1rem;">
+            {% else %}
+                <div class="image-placeholder" style="margin-top: 1rem;">
+                    <span>{{ product.name|slice:":1"|upper }}</span>
+                </div>
+            {% endif %}
+        </article>
+
+        <article class="card detail-copy">
+            <p class="eyebrow">Fiche produit</p>
+            <h1>{{ product.name }}</h1>
+            <p class="price-tag">{{ product.price }} €</p>
+            {% if product.description %}
+                <p class="lead">{{ product.description }}</p>
+            {% else %}
+                <p class="lead">Aucune description n'est disponible pour ce produit.</p>
+            {% endif %}
+
+            <div class="detail-grid">
+                <div class="info-tile">
+                    <span class="info-label">Disponibilite</span>
+                    <strong>
+                        {% if product.stock > 5 %}
+                            En stock
+                        {% elif product.stock > 0 %}
+                            Stock limite ({{ product.stock }})
+                        {% else %}
+                            Rupture de stock
+                        {% endif %}
+                    </strong>
+                </div>
+                <div class="info-tile">
+                    <span class="info-label">Categorie</span>
+                    <strong>{% if product.category %}{{ product.category.name }}{% else %}Non classe{% endif %}</strong>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem;">
+                {% if product.category %}
+                    <a class="btn btn-outline-primary" href="{% url 'category_detail' product.category.id %}">Voir la categorie</a>
+                {% endif %}
+                <a class="btn btn-primary" href="{% url 'product_list' %}">Retour au catalogue</a>
+            </div>
+        </article>
+    </section>
+</div>
+{% endblock %}

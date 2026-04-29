@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Liste des produits{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="hero-card mb-4">
+        <p class="eyebrow">Atelier templates</p>
+        <h1>Démo des templates Django</h1>
+        <p class="lead">Exemple demandé dans l'atelier avec variables, filtres, boucle et commentaires.</p>
+        {# Exemple de commentaire sur une seule ligne #}
+        {% comment %}
+        Bloc de commentaire multi-lignes pour montrer la syntaxe DTL.
+        {% endcomment %}
+        <div class="hero-pills" style="margin-top: 1.5rem;">
+            <span class="pill">DTL Django</span>
+            <span class="pill pill-soft">Syntaxe & Filtres</span>
+        </div>
+    </div>
+
+    <div class="feature-strip">
+        <article class="feature-card">
+            <h2>📝 Filtres Django</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Les filtres permettent de transformer les données dans les templates.</p>
+            <div style="background: var(--neutral-50); padding: 1.5rem; border-radius: var(--border-radius-md);">
+                <p><strong>Minuscule:</strong> <span class="pill">{{ produits.0|lower }}</span></p>
+                <p style="margin-top: 0.75rem;"><strong>Majuscule:</strong> <span class="pill">{{ produits.0|upper }}</span></p>
+                <p style="margin-top: 0.75rem;"><strong>Nombre d'éléments:</strong> <span class="pill">{{ produits|length }}</span></p>
+            </div>
+        </article>
+
+        <article class="feature-card">
+            <h2>🔄 Boucles</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Itération sur les listes de données.</p>
+            <div style="background: var(--neutral-50); padding: 1.5rem; border-radius: var(--border-radius-md);">
+                <ul style="list-style: none; padding: 0;">
+                    {% for produit in produits %}
+                        <li style="padding: 0.75rem; border-bottom: 1px solid var(--neutral-200);">
+                            <span class="pill pill-soft">{{ produit|upper }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </article>
+
+        <article class="feature-card">
+            <h2>💡 Concepts</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Les bases de Django Template Language.</p>
+            <div style="background: var(--neutral-50); padding: 1.5rem; border-radius: var(--border-radius-md);">
+                <p style="font-size: 0.95rem;"><strong>✓ Variables:</strong> {{ nom_variable }}</p>
+                <p style="font-size: 0.95rem; margin-top: 0.75rem;"><strong>✓ Filtres:</strong> {{ var|filtre }}</p>
+                <p style="font-size: 0.95rem; margin-top: 0.75rem;"><strong>✓ Tags:</strong> {% tag %}</p>
+            </div>
+        </article>
+    </div>
+
+    <section style="margin-top: 4rem; padding-top: 3rem; border-top: 2px solid var(--neutral-200); text-align: center;">
+        <a class="btn btn-primary btn-lg" href="{% url 'product_list' %}">Voir le catalogue réel</a>
+    </section>
+</div>
+{% endblock %}

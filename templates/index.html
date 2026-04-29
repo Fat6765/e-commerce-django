@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Accueil{% endblock %}
+{% block content %}
+<div class="container">
+    <section class="hero-panel hero-home mt-4">
+        <div class="hero-copy">
+            <p class="eyebrow">Boutique en ligne</p>
+            <h1 class="display-3">Découvrez nos produits et accédez rapidement au catalogue.</h1>
+            <div class="hero-pills">
+                <span class="pill">Produits</span>
+                <span class="pill pill-soft">Catégories</span>
+                <span class="pill">Nouveautés</span>
+            </div>
+            <div class="hero-actions">
+                <a class="btn btn-primary btn-lg" href="{% url 'product_list' %}" role="button">Voir le catalogue</a>
+                <a class="btn btn-outline-primary btn-lg" href="{% url 'category_list' %}" role="button">Voir les catégories</a>
+            </div>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-card">
+                <span class="stat-number">{{ latest_products|length }}</span>
+                <span class="stat-label">nouveaux produits</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ featured_categories|length }}</span>
+                <span class="stat-label">catégories mises en avant</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">24/7</span>
+                <span class="stat-label">accès au catalogue</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="feature-strip">
+        {% for category in featured_categories %}
+            <article class="feature-card">
+                <h2>{{ category.name }}</h2>
+                <p>{{ category.description|default:"Consultez les produits disponibles dans cette catégorie." }}</p>
+                <p class="section-action">
+                    <a class="btn btn-primary" href="{% url 'category_detail' category.id %}">Ouvrir</a>
+                </p>
+            </article>
+        {% empty %}
+            <article class="feature-card">
+                <h2>Catalogue prêt</h2>
+                <p>Ajoutez des catégories depuis l'administration pour les afficher ici.</p>
+            </article>
+            <article class="feature-card">
+                <h2>Produits visibles</h2>
+                <p>Le catalogue reste accessible même si aucune catégorie n'est encore affichée.</p>
+            </article>
+            <article class="feature-card">
+                <h2>Navigation rapide</h2>
+                <p>Accédez directement aux produits et aux catégories depuis le menu.</p>
+            </article>
+        {% endfor %}
+    </section>
+
+    <section class="home-latest">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Nouveautés</p>
+                <h2>Derniers produits ajoutés</h2>
+            </div>
+            <a class="btn btn-outline-primary" href="{% url 'product_list' %}">Tout voir</a>
+        </div>
+        {% if latest_products %}
+            <div class="grid">
+                {% for product in latest_products %}
+                    <article class="card product-card">
+                        <div class="product-card-top">
+                            <span class="pill">Produit</span>
+                            {% if product.category %}
+                                <span class="pill pill-soft">{{ product.category.name }}</span>
+                            {% endif %}
+                        </div>
+                        <h3><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h3>
+                        <p class="price-tag">{{ product.price }} €</p>
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <div class="image-placeholder">
+                                <span>{{ product.name|slice:":1"|upper }}</span>
+                            </div>
+                        {% endif %}
+                        <p class="card-action">
+                            <a class="btn btn-primary" href="{% url 'product_detail' product.id %}">Voir le détail</a>
+                        </p>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>Aucun produit n'est encore disponible.</p>
+                <a class="btn btn-primary" href="/admin/">Ajouter un produit</a>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

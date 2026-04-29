@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block title %}Creer un compte{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h2 class="mb-3">Creation d'un compte</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-success">Creer mon compte</button>
+                </form>
+                <p class="mt-3">
+                    Vous avez deja un compte ?
+                    <a href="{% url 'login' %}">Se connecter</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

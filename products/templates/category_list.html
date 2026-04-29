@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Catégories{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="hero-card mb-4">
+        <p class="eyebrow">Parcourir</p>
+        <h1>Nos catégories</h1>
+        <p class="lead">Choisissez une catégorie pour explorer notre sélection de produits organisée et cohérente.</p>
+        <div class="hero-pills">
+            <span class="pill">Collections</span>
+            <span class="pill pill-soft">{{ categories|length }} catégorie{{ categories|length|pluralize }}</span>
+            <span class="pill">Facile</span>
+        </div>
+        <p style="margin-top: 1.5rem;">
+            <a class="btn btn-primary" href="{% url 'product_list' %}">Voir tous les produits</a>
+        </p>
+    </div>
+
+    {% if categories %}
+        <section style="margin: 3rem 0;">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Collections</p>
+                    <h2>Explorez nos catégories</h2>
+                </div>
+            </div>
+            <div class="feature-strip">
+                {% for category in categories %}
+                    <article class="feature-card">
+                        <h2>{{ category.name }}</h2>
+                        <p>{{ category.description|default:"Découvrez notre sélection de produits pour cette catégorie." }}</p>
+                        <p style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                            <strong>{{ category.products.count }}</strong> produit{{ category.products.count|pluralize }}
+                        </p>
+                        <p style="margin-top: 1rem;">
+                            <a class="btn btn-primary" style="width: 100%; text-align: center;" href="{% url 'category_detail' category.id %}">Parcourir</a>
+                        </p>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section style="text-align: center; margin: 4rem 0; padding: 3rem; border-top: 2px solid var(--neutral-200);">
+            <p class="eyebrow">Catalogue complet</p>
+            <h2 style="font-size: 2rem; margin: 1rem 0;">Tous les produits</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; max-width: 500px; margin-left: auto; margin-right: auto;">Accédez à l'intégralité du catalogue pour consulter tous les produits disponibles, quel que soit leur catégorie.</p>
+            <a class="btn btn-primary btn-lg" href="{% url 'product_list' %}">Voir tous les produits</a>
+        </section>
+    {% else %}
+        <div class="empty-state">
+            <h3 style="color: var(--primary-color); margin-bottom: 1rem;">📂 Aucune catégorie</h3>
+            <p>Les catégories seront bientôt disponibles.</p>
+            <a class="btn btn-primary" href="{% url 'product_list' %}">Voir les produits</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

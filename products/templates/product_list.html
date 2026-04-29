@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Catalogue{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="hero-card mb-4">
+        <p class="eyebrow">Catalogue</p>
+        <h1>Nos produits</h1>
+        <p class="lead">Retrouvez ici l'ensemble des produits disponibles, soigneusement sélectionnés pour vous.</p>
+        <div class="hero-pills">
+            <span class="pill">Catalogue</span>
+            <span class="pill pill-soft">{{ products|length }} produit{{ products|length|pluralize }}</span>
+            <span class="pill">Qualité garantie</span>
+        </div>
+        <p style="margin-top: 1.5rem;">
+            <a class="btn btn-primary" href="{% url 'category_list' %}">Filtrer par catégories</a>
+            <a class="btn btn-outline-primary" href="#products">Voir tous les produits</a>
+        </p>
+    </div>
+
+    {% if products %}
+        <section class="promotion-banner">
+            <div class="promotion-banner-content">
+                <h2>✨ Collection spéciale</h2>
+                <p>Découvrez notre sélection de produits premium avec une qualité exceptionnelle et des prix compétitifs.</p>
+                <p><a class="btn btn-outline-primary" style="border-color: white; color: white; margin-top: 0.5rem;" href="#products">Explorer maintenant</a></p>
+            </div>
+        </section>
+    {% endif %}
+
+    <div class="grid" id="products">
+        {% for product in products %}
+            <article class="card product-card">
+                {% if forloop.first %}
+                    <span class="badge-new">✨ Nouveau</span>
+                {% endif %}
+                <div class="product-card-top">
+                    <span class="pill">Produit</span>
+                    {% if product.category %}
+                        <span class="pill pill-soft">{{ product.category.name }}</span>
+                    {% endif %}
+                </div>
+                <h3><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h3>
+                <p class="price-tag">{{ product.price }} €</p>
+                {% if product.category %}
+                    <p>
+                        <strong>Catégorie :</strong>
+                        <a href="{% url 'category_detail' product.category.id %}" style="color: var(--primary-color); text-decoration: none; transition: all 0.2s;">{{ product.category.name }}</a>
+                    </p>
+                {% endif %}
+                {% if product.stock < 5 and product.stock > 0 %}
+                    <p><span class="badge-stock-low">⏰ Stock limité ({{ product.stock }})</span></p>
+                {% elif product.stock > 0 %}
+                    <p><span class="badge-in-stock">✓ En stock</span></p>
+                {% endif %}
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                    <div class="image-placeholder" style="margin: 1rem 0; height: 150px;">
+                        <span>{{ product.name|slice:":1"|upper }}</span>
+                    </div>
+                {% endif %}
+                <p class="card-action">
+                    <a class="btn btn-primary" href="{% url 'product_detail' product.id %}">Voir le détail</a>
+                </p>
+            </article>
+        {% empty %}
+            <div class="empty-state">
+                <h3 style="color: var(--primary-color); margin-bottom: 1rem;">📦 Aucun produit disponible</h3>
+                <p>Les produits seront bientôt disponibles. Vérifiez régulièrement !</p>
+                <a class="btn btn-primary" href="{% url 'category_list' %}">Voir les catégories</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if products %}
+        <section style="text-align: center; margin-top: 4rem; padding: 3rem; border-top: 2px solid var(--neutral-200);">
+            <p class="eyebrow">Vous cherchez quelque chose?</p>
+            <h2 style="font-size: 2rem; margin: 1rem 0;">Parcourez nos catégories</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Nos produits sont organisés par catégories pour faciliter votre navigation.</p>
+            <a class="btn btn-primary btn-lg" href="{% url 'category_list' %}">Voir toutes les categories</a>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}

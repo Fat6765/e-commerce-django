@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block title %}Email envoyé{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card p-4 mt-5" style="max-width: 600px; margin: 0 auto;">
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">Email de confirmation envoyé</h4>
+            <p>Un email de confirmation a été envoyé à votre adresse email.</p>
+            <hr>
+            <p class="mb-0">Veuillez cliquer sur le lien de confirmation dans l'email pour activer votre compte. Après cela, vous pourrez vous connecter à votre compte.</p>
+        </div>
+        
+        <div class="mt-4">
+            <p class="text-muted">N'avez pas reçu l'email? Vérifiez votre dossier spam ou <a href="{% url 'signup' %}">créez un nouveau compte</a>.</p>
+            <a href="{% url 'product_list' %}" class="btn btn-primary">Retour à la boutique</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

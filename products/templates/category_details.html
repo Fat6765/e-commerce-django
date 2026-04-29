@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}{{ category.name }}{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="hero-card">
+        <p class="eyebrow">Collection</p>
+        <h1>{{ category.name }}</h1>
+        {% if category.description %}
+            <p class="lead">{{ category.description }}</p>
+        {% else %}
+            <p class="lead">Cette catégorie ne contient pas encore de description.</p>
+        {% endif %}
+        <div class="hero-pills">
+            <span class="pill">Catégorie</span>
+            <span class="pill pill-soft">{{ category.products.all|length }} produit{{ category.products.all|length|pluralize }}</span>
+        </div>
+        <p style="margin-top: 1.5rem;">
+            <a class="btn btn-outline-primary" href="{% url 'category_list' %}">Voir toutes les catégories</a>
+        </p>
+    </div>
+
+    {% if category.products.all %}
+        <section style="margin-top: 3rem;">
+            <p class="eyebrow">Produits disponibles</p>
+            <h2 style="font-size: 2rem; margin-bottom: 2rem;">{{ category.products.all|length }} article{{ category.products.all|length|pluralize }}</h2>
+            <div class="grid">
+                {% for product in category.products.all %}
+                    <article class="card product-card">
+                        <div class="product-card-top">
+                            <span class="pill">Produit</span>
+                            <span class="pill pill-soft">{{ category.name }}</span>
+                        </div>
+                        <h3><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h3>
+                        <p class="price-tag">{{ product.price }} €</p>
+                        {% if product.stock < 5 and product.stock > 0 %}
+                            <p><span class="badge-stock-low">⏰ Stock limité ({{ product.stock }})</span></p>
+                        {% elif product.stock > 0 %}
+                            <p><span class="badge-in-stock">✓ En stock</span></p>
+                        {% else %}
+                            <p><span class="badge-stock-low">✗ Indisponible</span></p>
+                        {% endif %}
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <div class="image-placeholder" style="height: 150px; margin: 1rem 0;">
+                                <span>{{ product.name|slice:":1"|upper }}</span>
+                            </div>
+                        {% endif %}
+                        <p class="card-action">
+                            <a class="btn btn-primary" href="{% url 'product_detail' product.id %}">Voir le détail</a>
+                        </p>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+    {% else %}
+        <div class="empty-state" style="margin-top: 2rem;">
+            <p>Aucun produit dans cette catégorie pour le moment.</p>
+            <a class="btn btn-primary" href="{% url 'category_list' %}">Retour aux catégories</a>
+        </div>
+    {% endif %}
+
+    <section style="margin-top: 3rem; padding-top: 3rem; border-top: 2px solid var(--neutral-200);">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Navigation</p>
+                <h2>Continuer votre exploration</h2>
+            </div>
+        </div>
+        <div style="text-align: center; padding: 3rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%); border-radius: var(--border-radius-lg); border: 1px solid rgba(99, 102, 241, 0.1);">
+            <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 1.5rem;">Découvrez nos autres collections et tous nos produits.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a class="btn btn-primary" href="{% url 'product_list' %}">Tous les produits</a>
+                <a class="btn btn-outline-primary" href="{% url 'category_list' %}">Autres catégories</a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

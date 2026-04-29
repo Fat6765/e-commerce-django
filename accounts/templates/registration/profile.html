@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card p-4 mt-5">
+        <h2>Mon profil</h2>
+        <p>Cette page est protegee. Elle est accessible uniquement aux utilisateurs connectes.</p>
+        <h4>Informations du compte</h4>
+        <ul class="list-group">
+            <li class="list-group-item">Nom d'utilisateur : {{ user.username }}</li>
+            <li class="list-group-item">Email : {{ user.email }}</li>
+            <li class="list-group-item">Staff : {{ user.is_staff }}</li>
+            <li class="list-group-item">Superutilisateur : {{ user.is_superuser }}</li>
+        </ul>
+        
+        <div class="mt-4">
+            <a href="{% url 'change_password' %}" class="btn btn-warning">Changer votre mot de passe</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
