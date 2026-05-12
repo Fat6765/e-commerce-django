@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Mon panier{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="hero-card mb-4">
+        <p class="eyebrow">Panier</p>
+        <h1>Vos articles selectionnes</h1>
+        <p class="lead">Ajoutez plusieurs produits, ajustez les quantites et finalisez votre achat en quelques etapes.</p>
+    </div>
+
+    {% if cart_items %}
+        <div class="card p-4">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Prix</th>
+                            <th>Quantite</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                            <tr>
+                                <td>
+                                    <strong>{{ item.product.name }}</strong><br>
+                                    <small class="text-muted">
+                                        {% if item.product.stock > 0 %}
+                                            Stock disponible : {{ item.product.stock }}
+                                        {% else %}
+                                            Rupture de stock
+                                        {% endif %}
+                                    </small>
+                                </td>
+                                <td>{{ item.unit_price }} MAD</td>
+                                <td style="min-width: 190px;">
+                                    <form method="post" action="{% url 'cart_update' item.product.pk %}" class="d-flex gap-2">
+                                        {% csrf_token %}
+                                        <input type="number" name="quantity" min="1" max="{{ item.product.stock }}" value="{{ item.quantity }}" class="form-control">
+                                        <button type="submit" class="btn btn-outline-primary">Mettre a jour</button>
+                                    </form>
+                                </td>
+                                <td>{{ item.total_price }} MAD</td>
+                                <td>
+                                    <form method="post" action="{% url 'cart_remove' item.product.pk %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger">Retirer</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
+                <a href="{% url 'product_list' %}" class="btn btn-outline-primary">Continuer mes achats</a>
+                <div style="text-align: right;">
+                    <p class="mb-1 text-muted">Total du panier</p>
+                    <h3 class="mb-0">{{ cart_total }} MAD</h3>
+                </div>
+            </div>
+
+            <div class="mt-4 text-end">
+                <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg">Passer la commande</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>Votre panier est vide</h3>
+            <p>Ajoutez quelques produits pour lancer votre commande.</p>
+            <a class="btn btn-primary" href="{% url 'product_list' %}">Voir le catalogue</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

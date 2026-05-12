@@ -46,9 +46,17 @@
                                 <span>{{ product.name|slice:":1"|upper }}</span>
                             </div>
                         {% endif %}
-                        <p class="card-action">
+                        <div class="card-action" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                             <a class="btn btn-primary" href="{% url 'product_detail' product.id %}">Voir le détail</a>
-                        </p>
+                            {% if product.stock > 0 %}
+                                <form method="post" action="{% url 'cart_add' product.id %}" style="display: inline-flex; gap: 0.5rem;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <input type="hidden" name="next" value="{% url 'cart_detail' %}">
+                                    <button type="submit" class="btn btn-outline-primary">Ajouter au panier</button>
+                                </form>
+                            {% endif %}
+                        </div>
                     </article>
                 {% endfor %}
             </div>

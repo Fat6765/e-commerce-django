@@ -14,9 +14,46 @@
             <li class="list-group-item">Staff : {{ user.is_staff }}</li>
             <li class="list-group-item">Superutilisateur : {{ user.is_superuser }}</li>
         </ul>
-        
-        <div class="mt-4">
+
+        <div class="mt-4 d-flex gap-2 flex-wrap">
+            <a href="{% url 'order_list' %}" class="btn btn-primary">Suivre mes commandes</a>
             <a href="{% url 'change_password' %}" class="btn btn-warning">Changer votre mot de passe</a>
+        </div>
+
+        <div class="mt-5">
+            <h4>Dernieres commandes</h4>
+            {% if recent_orders %}
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Reference</th>
+                                <th>Statut</th>
+                                <th>Date</th>
+                                <th>Montant</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                                <tr>
+                                    <td>{{ order.reference }}</td>
+                                    <td>{{ order.get_status_display }}</td>
+                                    <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                                    <td>{{ order.total_amount }} MAD</td>
+                                    <td>
+                                        <a href="{% url 'order_detail' order.pk %}" class="btn btn-sm btn-outline-primary">
+                                            Voir
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted mb-0">Aucune commande n'est associee a votre compte pour le moment.</p>
+            {% endif %}
         </div>
     </div>
 </div>

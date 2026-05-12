@@ -1,20 +1,26 @@
 from django.contrib import messages
 from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from .forms import RegisterForm, ChangePasswordForm
 from .models import EmailVerificationToken
+from products.models import Order
 
 
 def signup(request):
+    if request.user.is_authenticated:
+        return redirect("profile")
+
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
+            user.email = form.cleaned_data["email"]
             user.save()
             
             # Create verification token
@@ -39,9 +45,20 @@ def signup(request):
                     <p>Ou copiez ce lien: {verification_url}</p>
                     <p>Cordialement,<br/>L'equipe ecommerce</p>
                 </body></html>""",
-                from_email="noreply@ecommerce.com",
+                from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[user.email],
             )
+            if settings.EMAIL_DELIVERY_ENABLED:
+                messages.success(
+                    request,
+                    "Votre compte a ete cree. Un email de confirmation vient d'etre envoye.",
+                )
+            else:
+                messages.warning(
+                    request,
+                    "Votre compte a ete cree, mais l'envoi email n'est pas encore configure. "
+                    "Ajoutez les identifiants SMTP dans ecommerce/.env pour envoyer le lien de confirmation.",
+                )
             return redirect("email_sent")
     else:
         form = RegisterForm()
@@ -51,7 +68,12 @@ def signup(request):
 
 @login_required
 def profile(request):
-    return render(request, "registration/profile.html")
+    recent_orders = (
+        Order.objects.filter(user=request.user)
+        .prefetch_related("items__product")
+        .order_by("-created_at")[:5]
+    )
+    return render(request, "registration/profile.html", {"recent_orders": recent_orders})
 
 
 def email_sent(request):

@@ -1,0 +1,99 @@
+{% extends 'layout.html' %}
+
+{% block title %}Commande {{ order.reference }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card p-4 mt-5">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+            <div>
+                <h2 class="mb-1">Commande {{ order.reference }}</h2>
+                <p class="text-muted mb-0">Passee le {{ order.created_at|date:"d/m/Y H:i" }}</p>
+            </div>
+            <a href="{% url 'order_list' %}" class="btn btn-outline-primary">
+                {% if is_admin_order_view %}Retour a toutes les commandes{% else %}Retour a mes commandes{% endif %}
+            </a>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="border rounded p-3 h-100">
+                    <h5>Statut</h5>
+                    <p class="mb-0">{{ order.get_status_display }}</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border rounded p-3 h-100">
+                    <h5>Mise a jour</h5>
+                    <p class="mb-0">{{ order.updated_at|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border rounded p-3 h-100">
+                    <h5>Total</h5>
+                    <p class="mb-0">{{ order.total_amount }} MAD</p>
+                </div>
+            </div>
+        </div>
+
+        {% if is_admin_order_view %}
+            <div class="mb-4">
+                <h4>Coordonnees du client</h4>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <tbody>
+                            <tr>
+                                <th>Nom</th>
+                                <td>{{ order.customer_name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email</th>
+                                <td>{{ order.customer_email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Telephone</th>
+                                <td>{{ order.customer_phone }}</td>
+                            </tr>
+                            <tr>
+                                <th>Compte lie</th>
+                                <td>{% if order.user %}{{ order.user.username }}{% else %}Client invite{% endif %}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="mb-4">
+            <h4>Adresse de livraison</h4>
+            <p class="mb-0">{{ order.shipping_address|linebreaksbr }}</p>
+        </div>
+
+        <div>
+            <h4>Articles</h4>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Quantite</th>
+                            <th>Prix unitaire</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.unit_price }} MAD</td>
+                                <td>{{ item.line_total }} MAD</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

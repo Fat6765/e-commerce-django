@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Commande confirmee{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="hero-card">
+        <p class="eyebrow">Commande validee</p>
+        <h1>Merci pour votre achat</h1>
+        <p class="lead">Votre commande <strong>{{ reference }}</strong> a bien ete enregistree.</p>
+        <p>Un email de confirmation sera envoye a <strong>{{ customer_email }}</strong> si la messagerie automatique est configuree.</p>
+        <div class="hero-actions">
+            <a class="btn btn-primary" href="{% url 'product_list' %}">Retour au catalogue</a>
+            <a class="btn btn-outline-primary" href="{% url 'cart_detail' %}">Voir mon panier</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

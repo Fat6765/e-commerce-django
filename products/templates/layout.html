@@ -24,7 +24,9 @@
                 <a href="{% url 'product_list' %}">Accueil</a>
                 <a href="{% url 'product_list' %}">Produits</a>
                 <a href="{% url 'category_list' %}">Categories</a>
+                <a href="{% url 'cart_detail' %}">Panier{% if cart_items_count %} ({{ cart_items_count }}){% endif %}</a>
                 {% if user.is_authenticated %}
+                    <a href="{% url 'order_list' %}">Mes commandes</a>
                     <a href="{% url 'profile' %}">Mon profil</a>
                     <span style="color: var(--text-secondary);">Bonjour, {{ user.username }}</span>
                     <form method="post" action="{% url 'logout' %}" style="display: inline;">

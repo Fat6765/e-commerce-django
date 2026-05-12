@@ -1,6 +1,34 @@
 import os
 from pathlib import Path
 
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    load_dotenv = None
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def load_simple_env_file(env_file):
+    for raw_line in env_file.read_text().splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip("'\""))
+
+# Charger les fichiers .env connus si python-dotenv est disponible
+for env_file in (BASE_DIR / ".env", BASE_DIR / "ecommerce" / ".env"):
+    if env_file.exists():
+        if load_dotenv is not None:
+            load_dotenv(env_file)
+        else:
+            load_simple_env_file(env_file)
+
+# Maintenant, os.environ.get va chercher dans le fichier .env
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() == "true"
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -60,6 +88,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "products.context_processors.cart_summary",
             ],
         },
     },
@@ -133,12 +162,31 @@ LOGIN_REDIRECT_URL = "profile"
 LOGOUT_REDIRECT_URL = "product_list"
 LOGIN_URL = "login"
 
-# Email Configuration for Development
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-# For production, use:
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
-# EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
-# EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() == "true"
-# EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-# EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_PROVIDER = os.environ.get("EMAIL_PROVIDER", "").strip().lower()
+EMAIL_PROVIDER_HOSTS = {
+    "gmail": "smtp.gmail.com",
+    "sendgrid": "smtp.sendgrid.net",
+    "mailgun": "smtp.mailgun.org",
+}
+EMAIL_HOST = os.environ.get("EMAIL_HOST", EMAIL_PROVIDER_HOSTS.get(EMAIL_PROVIDER, "smtp.gmail.com"))
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() == "true"
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "False").lower() == "true"
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "").strip()
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "").strip()
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "noreply@ecommerce.com")
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+EMAIL_TIMEOUT = int(os.environ.get("EMAIL_TIMEOUT", 20))
+
+EMAIL_DELIVERY_ENABLED = bool(
+    EMAIL_HOST_USER
+    and EMAIL_HOST_PASSWORD
+    and "votre-email@gmail.com" not in EMAIL_HOST_USER
+    and "votre-code-application" not in EMAIL_HOST_PASSWORD
+)
+
+EMAIL_BACKEND = (
+    "django.core.mail.backends.smtp.EmailBackend"
+    if EMAIL_DELIVERY_ENABLED
+    else "django.core.mail.backends.console.EmailBackend"
+)

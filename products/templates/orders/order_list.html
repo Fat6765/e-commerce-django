@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+
+{% block title %}{% if is_admin_order_view %}Toutes les commandes{% else %}Mes commandes{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card p-4 mt-5">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <div>
+                <h2 class="mb-1">{% if is_admin_order_view %}Toutes les commandes{% else %}Mes commandes{% endif %}</h2>
+                <p class="text-muted mb-0">
+                    {% if is_admin_order_view %}
+                        Consultez toutes les commandes confirmees avec les coordonnees des clients.
+                    {% else %}
+                        Suivez l'avancement de vos achats depuis votre espace client securise.
+                    {% endif %}
+                </p>
+            </div>
+            <a href="{% url 'product_list' %}" class="btn btn-outline-primary">Continuer mes achats</a>
+        </div>
+
+        {% if orders %}
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            {% if is_admin_order_view %}
+                                <th>Client</th>
+                                <th>Telephone</th>
+                                <th>Email</th>
+                            {% endif %}
+                            <th>Date</th>
+                            <th>Statut</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>{{ order.reference }}</td>
+                                {% if is_admin_order_view %}
+                                    <td>{{ order.customer_name }}</td>
+                                    <td>{{ order.customer_phone }}</td>
+                                    <td>{{ order.customer_email }}</td>
+                                {% endif %}
+                                <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                                <td>{{ order.get_status_display }}</td>
+                                <td>{{ order.total_amount }} MAD</td>
+                                <td>
+                                    <a href="{% url 'order_detail' order.pk %}" class="btn btn-sm btn-primary">Details</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info mb-0">
+                Vous n'avez pas encore de commande. Connectez-vous ici plus tard pour suivre vos achats.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

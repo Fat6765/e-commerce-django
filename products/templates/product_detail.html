@@ -50,11 +50,22 @@
                 </div>
             </div>
 
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem;">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; align-items: flex-end;">
+                {% if product.stock > 0 %}
+                    <form method="post" action="{% url 'cart_add' product.id %}" style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end;">
+                        {% csrf_token %}
+                        <div>
+                            <label for="id_quantity" class="form-label">Quantite</label>
+                            {{ add_to_cart_form.quantity }}
+                        </div>
+                        <input type="hidden" name="next" value="{% url 'cart_detail' %}">
+                        <button type="submit" class="btn btn-primary">Ajouter au panier</button>
+                    </form>
+                {% endif %}
                 {% if product.category %}
                     <a class="btn btn-outline-primary" href="{% url 'category_detail' product.category.id %}">Voir la categorie</a>
                 {% endif %}
-                <a class="btn btn-primary" href="{% url 'product_list' %}">Retour au catalogue</a>
+                <a class="btn btn-outline-primary" href="{% url 'product_list' %}">Retour au catalogue</a>
             </div>
         </article>
     </section>
