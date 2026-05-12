@@ -1,0 +1,24 @@
+.DS_Store
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Local virtual environments
+myenv/
+.venv/
+.venv-1/
+.venv-2/
+.venv-3/
+
+# Local settings and databases
+*.env
+.env
+ecommerce/.env
+db.sqlite3
+
+# Editor files
+.vscode/
+
+# Nested local repo copy
+e-commerce-django/
