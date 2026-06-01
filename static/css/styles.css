@@ -3,9 +3,9 @@
    ============================================ */
 
 :root {
-    --primary-color: #6366f1;
-    --primary-light: #818cf8;
-    --primary-dark: #4f46e5;
+    --primary-color: #2563eb; /* clearer blue */
+    --primary-light: #60a5fa;
+    --primary-dark: #1e40af;
     --secondary-color: #ec4899;
     --accent-color: #f59e0b;
     --success-color: #10b981;
@@ -38,9 +38,10 @@
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
 
-    --transition-fast: 150ms ease-in-out;
-    --transition-base: 200ms ease-in-out;
-    --transition-slow: 300ms ease-in-out;
+    --transition-fast: 120ms ease-in-out;
+    --transition-base: 180ms ease-in-out;
+    --transition-slow: 280ms ease-in-out;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
 
 * {
@@ -54,11 +55,17 @@ html {
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-sans);
     background-color: var(--neutral-50);
     color: var(--text-primary);
     line-height: 1.6;
     font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
 
 /* ============================================
@@ -211,6 +218,50 @@ body {
 
 .nav-links a:hover::after {
     width: 100%;
+}
+
+/* ============================================
+   HAMBURGER MENU
+   ============================================ */
+
+.nav-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all var(--transition-base);
+}
+
+.nav-hamburger span {
+    display: block;
+    width: 24px;
+    height: 2.5px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: all var(--transition-base);
+}
+
+.nav-hamburger:hover span {
+    background: var(--primary-color);
+}
+
+.nav-hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(10px, 10px);
+}
+
+.nav-hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(8px, -8px);
+}
+
+.nav-mobile-spacer {
+    display: none;
 }
 
 /* ============================================
@@ -655,23 +706,26 @@ body {
 
 .product-card img {
     width: 100%;
-    height: 200px;
+    aspect-ratio: 4/3;
+    height: auto;
+    max-height: 360px;
     object-fit: cover;
     border-radius: var(--border-radius-md);
     margin: 1rem 0;
-    transition: all var(--transition-slow);
-    filter: brightness(0.95);
-    animation: slideUp 0.6s ease-out 0.3s both;
+    transition: transform var(--transition-slow), filter var(--transition-fast), box-shadow var(--transition-fast);
+    filter: brightness(0.98);
+    animation: slideUp 0.45s ease-out 0.1s both;
 }
 
 .product-card img:hover {
-    transform: scale(1.08) rotate(1deg);
-    filter: brightness(1.05) saturate(1.2);
-    box-shadow: 0 15px 40px rgba(99, 102, 241, 0.3);
+    transform: scale(1.04);
+    filter: brightness(1.02) saturate(1.05);
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.18);
 }
 
 .product-card:hover {
-    animation: glow 2s ease-in-out infinite;
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
 }
 
 .product-card-top a {
@@ -1396,14 +1450,74 @@ body {
 }
 
 @media (max-width: 768px) {
+    .nav-hamburger {
+        display: flex !important;
+        order: 1;
+        z-index: 1001;
+    }
+
     .nav-inner {
-        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
         gap: 1rem;
+        min-height: 64px;
+    }
+
+    .brand {
+        order: 2;
+        align-items: center;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .nav-mobile-spacer {
+        display: block;
+        order: 3;
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
     }
 
     .nav-links {
-        gap: 1rem;
-        font-size: 0.85rem;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: white;
+        border-bottom: 1px solid var(--neutral-200);
+        flex-direction: column;
+        gap: 0;
+        padding: 1rem;
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all var(--transition-base);
+        z-index: 999;
+        max-height: calc(100vh - 70px);
+        overflow-y: auto;
+    }
+
+    .nav-links.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--neutral-100);
+        color: var(--text-primary);
+    }
+
+    .nav-links a:hover {
+        background: var(--neutral-50);
+        color: var(--primary-color);
+    }
+
+    .nav-links a::after {
+        display: none;
     }
 
     .hero-copy h1 {
@@ -1464,11 +1578,52 @@ body {
     .checkout-subtitle {
         font-size: 0.82rem;
     }
+
+    .nav-links form {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--neutral-100);
+    }
+
+    .nav-links form button {
+        width: 100%;
+    }
+
+    .nav-links span {
+        display: block;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--neutral-100);
+    }
 }
 
 @media (max-width: 480px) {
     .container {
         padding: 0 1rem;
+    }
+
+    .nav-inner {
+        min-height: 58px;
+    }
+
+    .nav-hamburger span {
+        width: 22px;
+        height: 2px;
+    }
+
+    .nav-mobile-spacer {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+    }
+
+    .nav-links {
+        top: 60px;
+        padding: 0.75rem;
+    }
+
+    .nav-links a {
+        padding: 0.6rem 0.75rem;
+        font-size: 0.9rem;
     }
 
     .hero-copy h1 {
