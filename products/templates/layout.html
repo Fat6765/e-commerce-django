@@ -16,11 +16,20 @@
 
     <nav class="navbar">
         <div class="container nav-inner">
+            <button class="nav-hamburger" id="navToggle" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
             <a class="brand" href="{% url 'product_list' %}">
                 <span class="brand-main">Ecommerce</span>
                 <span class="brand-sub">Emi Shop</span>
             </a>
-            <div class="nav-links">
+
+            <div class="nav-mobile-spacer" aria-hidden="true"></div>
+            
+            <div class="nav-links" id="navLinks">
                 <a href="{% url 'product_list' %}">Accueil</a>
                 <a href="{% url 'product_list' %}">Produits</a>
                 <a href="{% url 'category_list' %}">Categories</a>
@@ -67,6 +76,29 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/popper.min.js' %}"></script>
+    <script>
+        // Mobile Menu Toggle
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        
+        if (navToggle) {
+            navToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                navToggle.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+            
+            // Close menu when a link is clicked
+            const links = navLinks.querySelectorAll('a');
+            links.forEach(link => {
+                link.addEventListener('click', function() {
+                    navToggle.classList.remove('active');
+                    navLinks.classList.remove('active');
+                });
+            });
+        }
+    </script>
     {% block javascripts %}{% endblock %}
+
 </body>
 </html>
